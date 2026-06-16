@@ -1,0 +1,70 @@
+﻿@model mYPMS.Models.UsersAndRoles
+@using Microsoft.AspNetCore.Identity
+@using NonFactors.Mvc.Grid
+
+<div class="w3-container w3-padding-large">
+    @(
+        Html.Grid(Model.Users!).Build(columns =>
+        {
+            columns.Add(model => model.User!.UserName).Titled("نام کاربری").Css("w3-right-align");
+            columns.Add(model => model.RolesName).Titled("نقش").Css("w3-right-align");
+            columns.Add(model => @"<div class=""w3-cell-row"">
+    <div class=""w3-container w3-cell"">
+    <i style=""cursor:pointer;"" onclick=""modalUser('" + model.User!.UserName + @"');"" class=""fa fa-pencil-square-o w3-xlarge w3-hover-text-red""></i>
+    </div>
+    <div class=""w3-container w3-cell"">
+    <form action=""/Settings/UserDelete"" method=""post"" id=""UserDeleteForm_" + model.User!.Id + @""">
+    <input type=""hidden"" value=" + model.User!.Id + @" name=""id"" id=""id"" />
+    <i style=""cursor:pointer;"" onclick=""document.getElementById('UserDeleteForm_" + model.User!.Id + @"').submit();"" class=""fa fa-trash-o w3-xlarge w3-hover-text-red""></i>
+    </form>
+    </div>
+    </div>").Encoded(false).Width(120);
+        })
+        .RowAttributed(model => new { @class = "w3-hover-lime", data_id = model.User!.Id })
+        .Filterable()
+        .Css("w3-table-all w3-card-4 w3-right-align")
+        .Sortable()
+        )
+</div>
+
+<!--START MODAL TAG EDIT-->
+<div id="modalUser" class="w3-modal">
+    <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-light-gray">
+            <div class="w3-display-topleft">
+                <span onclick="$('#modalUser').hide();" class="w3-button fa fa-window-close w3-xlarge"></span>
+            </div>
+            <h2>جدید / ویرایش کاربر</h2>
+        </header>
+        <form id="formUser" method="post" action="./UserEdit">
+            <input type="hidden" id="role" name="role" />
+            <div class="w3-container w3-padding">
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right w3-cell"><lable>نام کاربری</lable></div>
+                    <div class="w3-threequarter w3-cell"><input id="username" name="username" class="w3-input w3-round" type="text" placeholder="نام کاربری" /></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>کلمه عبور</lable></div>
+                    <div class="w3-threequarter w3-cell">
+                        <input id="password" autocomplete="off" type="password" name="password" class="w3-input w3-round" />
+                    </div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right w3-cell"><lable>کاربر مدیر سیستم</lable></div>
+                    <div class="w3-threequarter w3-cell"><input id="chRole" class="w3-check" type="checkbox"/></div>
+                </div>
+            </div>
+        </form>
+        <footer class="w3-container w3-light-gray">
+            <div class="w3-cell-row w3-center">
+                <div class="w3-container w3-cell">
+                    <button class="w3-button w3-green w3-hover-lime w3-round" onclick="userUpdate();">ذخیره</button>
+                </div>
+                <div class="w3-container w3-cell">
+                    <button class="w3-button w3-red w3-hover-lime w3-round" onclick="$('#modalUser').hide();">انصراف</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<!--END MODAL TAG EDIT-->

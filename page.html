@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link href="./wwwroot/lib/video.js/video-js.min.css" rel="stylesheet" />
+    <title></title>
+</head>
+<body>
+    <!--<iframe src="https://admin:megafaYakand@192.168.88.60/cgi-bin/mjpg/video.cgi?channel=1&subtype=1" width="640px" height="480px"></iframe>
+    <video>
+        <source src="/imgs/sample_640x360.mjpeg" type="video/mpeg" />
+    </video>-->
+    <script src="./wwwroot/lib/video.js/video.min.js"></script>
+    <video-js crossorigin="anonymous" id=vid1 width=600 height=300 class="vjs-default-skin" controls autoplay >
+    </video-js>
+    <script>
+        videojs.Vhs.xhr.beforeRequest = function (options) {
+            options.headers = options.headers || {};
+            options.headers.Authorization = "Basic " + btoa("view:view3456");
+            //options.headers.'X-Request-With' = "XMLHttpRequest";
+            //options.headers.'Access-Control-Allow-Origin' = "*";
+            options.withCredentials = true;
+            console.log('options', options);
+            return options;
+        };
+        var player = videojs('vid1');
+        player.src({
+            src: 'http://192.168.88.60/cgi-bin/mjpg/video.cgi?channel=1&subtype=1',
+            type: 'application/x-mpegURL',
+            withCredentials: true
+        });
+
+        /*
+        player.play();/*player.tech().vhs.xhr.beforeRequest = function (options) {
+            options.headers = options.headers || {};
+            options.headers.Authorization = "Basic " + btoa("admin:megafaYakand");
+            console.log('options', options);
+            return options;
+        };*/
+        //player.play();
+    </script>
+</body>
+</html>
+
+
+
+<!--
+
+
+    <video id="videoIn" class="video-js" style="margin:auto;" preload="none" autoplay controls data-setup='{"language":"fa","liveui":true}'>
+        <source src="https://admin:megafaYakand@192.168.88.60/cgi-bin/mjpg/video.cgi?channel=1&subtype=1" type="video/mpeg4-generic" />
+    </video>
+
+    <script>
+        var player = videojs("videoIn", { liveui: true });
+    </script>
+
+    <video id="videoIn" class="video-js" style="margin:auto;" preload="none" autoplay controls data-setup='{"language":"fa","liveui":true}'>
+    <source src="https://admin:megafaYakand@192.168.88.60/cgi-bin/mjpg/video.cgi?channel=1&subtype=1" type="application/x-mpegURL" />
+    <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a
+        web browser that supports HTML5 video.
+    </p>
+</video>
+-->

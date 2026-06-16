@@ -1,0 +1,35 @@
+﻿@model IQueryable<mYPMS.Models.tTraffic>
+@using NonFactors.Mvc.Grid;
+@(Html.Grid(Model).Id("dataTable")
+            .Build(columns =>
+            {
+                columns.Add(model => model.xParking.xTitle).Titled("پارکینگ").Css("w3-right-align");
+                columns.Add(model => model.xEntryGate.xName).Titled("دروازه ورود").Css("w3-right-align");
+                columns.Add(model => model.xDepartureGate.xName).Titled("دروازه خروج").Css("w3-right-align");
+                columns.Add(model => model.xEntryDateTime).Titled("زمان ورود").Css("w3-right-align");
+                columns.Add(model => model.xDepartureDateTime).Titled("زمان خروج").Css("w3-right-align");
+                columns.Add(model => model.xLicencePlateEn).Titled("پلاک ورود").Css("w3-right-align");
+                columns.Add(model => model.xLicencePlateEx).Titled("پلاک خروج").Css("w3-right-align");
+                columns.Add(model => model.xTagId).Titled("شماره کارت").Css("w3-right-align");
+                columns.Add(model => model.xStatusCode).Titled("وضعیت").Css("w3-right-align").RenderedAs(model =>
+                {
+                    if (model.xStatusCode == 1) return "وارد شده";
+                    if (model.xStatusCode == 2) return "خارج شده";
+                    if (model.xStatusCode == 4) return "حذف شده";
+                    else return "نا مشخص";
+                });
+                columns.Add(model => @"<i style=""cursor:pointer;"" onclick=""getDetail('" + model.xId + @"');"" class=""fa fa-info-circle w3-xlarge w3-hover-text-red""></i>")
+                    .Encoded(false).Width(50).Css("w3-center");
+            })
+            .Empty("داده ای وجود ندارد")
+            .RowAttributed(model => new { @class = "w3-hover-lime", data_id = model.xId })
+            .Css("w3-table-all w3-card-4 w3-right-align")
+            .Sortable()
+            .Pageable(pager =>
+            {
+                pager.PageSizes = new Dictionary<Int32, String> { { 50, "50" }, { 100, "100" }, { 200, "200" } };
+                pager.ShowPageSizes = true;
+                pager.PagesToDisplay = 50;
+                pager.CurrentPage = 1;
+                pager.RowsPerPage = 3;
+            }))

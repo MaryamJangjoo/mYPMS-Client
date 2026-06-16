@@ -1,0 +1,51 @@
+﻿@model mYPMS.Models.UsersAndRoles
+@using Microsoft.AspNetCore.Identity
+@{
+    if (Model.Roles != null)
+    {
+        foreach (var role in Model.Roles)
+        {
+            <div class="w3-col s6 m4 l2 w3-right w3-padding-large">
+                <div class="w3-card-4 w3-2021-mint w3-display-container w3-hover-lime" style="aspect-ratio:1/1;cursor:pointer;">
+                    <h1 class="w3-display-middle" style="margin:0;">@role.Name</h1>
+                    <i class="fa fa-ellipsis-h w3-xlarge w3-padding w3-hover-text-red w3-display-bottomleft"></i>
+                </div>
+            </div>
+        }
+    }
+}
+<!--START MODAL ROLE EDIT-->
+@*
+<div id="modalRole" class="w3-modal">
+    <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-light-gray">
+            <div class="w3-display-topleft">
+                <span onclick="roleDelete();" class="w3-button fa fa-trash w3-xlarge"></span>
+                <span onclick="$('#modalRole').hide();" class="w3-button fa fa-window-close w3-xlarge"></span>
+            </div>
+            <h2>جدید / ویرایش نقش</h2>
+        </header>
+        <form asp-action="" method="post" id="formRole">
+            <div class="w3-container w3-padding">
+                <input type="hidden" id="roleId" name="roleId" />
+                <input type="hidden" id="roleName" name="roleName" />
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right w3-cell"><lable>عنوان</lable></div>
+                    <div class="w3-threequarter w3-cell"><input id="name" class="w3-input w3-round" type="text" placeholder="عنوان" /></div>
+                </div>
+            </div>
+        </form>
+        <footer class="w3-container w3-light-gray">
+            <div class="w3-cell-row w3-center">
+                <div class="w3-container w3-cell">
+                    <button class="w3-button w3-green w3-hover-lime w3-round" onclick="roleUpdate();">ذخیره</button>
+                </div>
+                <div class="w3-container w3-cell">
+                    <button class="w3-button w3-red w3-hover-lime w3-round" onclick="$('#modalRole').hide();">انصراف</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+*@
+<!--END MODAL ROLE EDIT-->

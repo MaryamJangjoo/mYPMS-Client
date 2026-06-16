@@ -1,0 +1,195 @@
+﻿@model IEnumerable<mYPMS.Models.tParking>
+@*@using NonFactors.Mvc.Grid;*@
+@{
+    ViewData["Title"] = "پارکینگ ها";
+}
+
+<div class="w3-container">
+    <!--BEGIN Title and Bar-->
+    <div class="w3-display-container" style="height:70px;">
+        <div class="w3-display-left">
+            <a asp-action="Index"><i class="fa fa-arrow-circle-left w3-xxxlarge w3-text-green w3-hover-text-lime"></i></a>
+        </div>
+        <div class="w3-display-middle">
+            <h1 class="w3-text-black"><b>پارکینگ ها</b></h1>
+        </div>
+        <div class="w3-display-right">
+            <i class="fa fa-plus-circle w3-xxxlarge w3-text-red w3-hover-text-lime" style="cursor:pointer" onclick="getParking();"></i>
+        </div>
+    </div>
+    <!--END Title and Bar-->
+    <!--BEGIN Search Bar-->
+    <div class="w3-row w3-padding-large">
+        <div class="w3-col w3-right" style="width:50px;"><i class="fa fa-search w3-xxlarge"></i></div>
+        <div class="w3-rest"><input id="search" class="w3-input w3-border w3-round-large" type="text" /></div>
+    </div>
+    <!--END Search Bar-->
+    <!--BEGIN Data Table-->
+    <div class="w3-container w3-padding-large">
+        <table class="w3-table-all w3-hoverable w3-card-4 w3-right-align">
+            <thead>
+                <tr>
+                    <th class="w3-right-align">ردیف</th>
+                    <th class="w3-right-align">کد پارکینگ</th>
+                    <th class="w3-right-align">عنوان</th>
+                    <th class="w3-right-align">تعرفه پیش فرض</th>
+                    <th class="w3-right-align">ظرفیت</th>
+                    <th class="w3-right-align">آدرس</th>
+                    <th class="w3-right-align">توضیحات</th>
+                    <th class="w3-right-align">عملیات</th>
+                </tr>
+            </thead>
+            <tbody id="dataTable">
+                @{
+                    int i = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    i++;
+                    <tr class="w3-hover-lime">
+                        <td class="w3-right-align">@i</td>
+                        <td class="w3-right-align">@Html.DisplayFor(modelItem => item.xCode)</td>
+                        <td class="w3-right-align">@Html.DisplayFor(modelItem => item.xTitle)</td>
+                        <td class="w3-right-align">@Html.DisplayFor(modelItem => item.xTariff.xTitle)</td>
+                        <td class="w3-right-align">@Html.DisplayFor(modelItem => item.xCapacity)</td>
+                        <td class="w3-right-align">@Html.DisplayFor(modelItem => item.xAddress)</td>
+                        <td class="w3-right-align">@Html.DisplayFor(modelItem => item.xDescription)</td>
+                        <td class="w3-right-align">
+                            <div class="w3-cell-row">
+                                <div class="w3-container w3-cell">
+                                    <i style="cursor:pointer;" onclick="getParking('@item.xId');" class="fa fa-pencil-square-o w3-xlarge w3-hover-text-red"></i>
+                                </div>
+                                <div class="w3-container w3-cell">
+                                    <form asp-action="ParkingDelete" id="ParkingDeleteForm@(i)">
+                                        <input type="hidden" value="@item.xId" name="xId" id="xId" />
+                                        <i style="cursor:pointer;" onclick="document.getElementById('ParkingDeleteForm@(i)').submit();" class="fa fa-trash-o w3-xlarge w3-hover-text-red"></i>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <!--END Data Table-->
+    @*@(Html.Grid(Model)
+    .Build(columns =>
+    {
+    columns.Add(model => model.xId).Titled("شناسه");
+    })
+    .Filterable()
+    .Css("w3-table-all w3-hoverable w3-card-4")
+    .Sortable().Pageable())*@
+</div>
+<!--START MODAL DATA EDIT-->
+<div id="parkingEdit" class="w3-modal">
+    <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-light-gray">
+            <span onclick="document.getElementById('parkingEdit').style.display='none'"
+                  class="w3-button w3-display-topleft fa fa-window-close w3-xlarge"></span>
+            <h2>جدید / ویرایش پارکینگ</h2>
+        </header>
+
+        <form asp-action="ParkingEdit" method="post" id="formParking">
+            <div class="w3-container w3-padding" id="parkingcontent">
+                <input type="hidden" id="xId" name="xId" />
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right w3-cell"><lable>کد پارکینگ</lable></div>
+                    <div class="w3-threequarter w3-cell"><input id="xCode" class="w3-input w3-round" type="text" placeholder="کد پارکینگ" /></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>عنوان</lable></div>
+                    <div class="w3-threequarter"><input id="xTitle" class="w3-input w3-round" type="text" placeholder="عنوان" /></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>تعرفه پیش فرض</lable></div>
+                    <div class="w3-threequarter"><select id="selectPrice" class="w3-select"><option disabled selected value=0>انتخاب تعرفه</option></select></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>ظرفیت</lable></div>
+                    <div class="w3-threequarter"><input id="xCapacity" class="w3-input w3-round" type="number" placeholder="ظرفیت" /></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>آدرس</lable></div>
+                    <div class="w3-threequarter"><input id="xAddress" class="w3-input w3-round" type="text" placeholder="آدرس پارکینگ" /></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>تنظیمات</lable></div>
+                    <div class="w3-threequarter"><textarea id="xSettings" class="w3-input w3-round" placeholder="تنظیمات"></textarea></div>
+                </div>
+                <div class="w3-cell-row w3-container">
+                    <div class="w3-quarter w3-right"><lable>توضیحات</lable></div>
+                    <div class="w3-threequarter"><textarea id="xDescription" class="w3-input w3-round" placeholder="توضیحات"></textarea></div>
+                </div>
+            </div>
+        </form>
+        <footer class="w3-container w3-light-gray">
+            <div class="w3-cell-row w3-center">
+                <div class="w3-container w3-cell">
+                    <button class="w3-button w3-green w3-hover-lime w3-round" onclick="setParking();">ذخیره</button>
+                </div>
+                <div class="w3-container w3-cell">
+                    <button class="w3-button w3-red w3-hover-lime w3-round" onclick="document.getElementById('parkingEdit').style.display='none'">انصراف</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<!--END MODAL DATA EDIT-->
+@section Scripts
+    {
+    <script type="text/javascript">
+        $.getJSON(
+            "/Settings/PriceExists",
+            function (data) {
+                $("#selectPrice option:gt(0)").remove();
+                $.each(data, function () { $("#selectPrice").append($("<option></option>").attr("value", this.xId).text(this.xTitle)); });
+            }
+        );
+        function getParking(id = 0) {
+            if (id == null || id == 0) {
+                $("#formParking #selectPrice").val($("#formParking #selectPrice option:first").val());
+                $("#formParking #xId").val(0);
+                $("#formParking #xCode").val("");
+                $("#formParking #xTitle").val("");
+                $("#formParking #xCapacity").val(0);
+                $("#formParking #xAddress").val("");
+                $("#formParking #xDescription").val("");
+                $("#formParking #xSettings").val("");
+                $("#parkingEdit").css("display", "block");
+            } else {
+                $.getJSON(
+                    "/Settings/ParkingExists",
+                    { "xId": id },
+                    function (data) {
+                        $("#formParking #selectPrice").val(data.xTariffId);
+                        $("#formParking #xId").val(data.xId);
+                        $("#formParking #xCode").val(data.xCode);
+                        $("#formParking #xTitle").val(data.xTitle);
+                        $("#formParking #xCapacity").val(data.xCapacity);
+                        $("#formParking #xAddress").val(data.xAddress);
+                        $("#formParking #xDescription").val(data.xDescription);
+                        $("#formParking #xSettings").val(data.xSettings);
+                        $("#parkingEdit").css("display", "block");
+                    });
+            }
+        }
+        function setParking() {
+            $.post("/Settings/ParkingEdit",
+                {
+                    xId: $("#formParking #xId").val(),
+                    xCode: $("#formParking #xCode").val(),
+                    xTitle: $("#formParking #xTitle").val(),
+                    xCapacity: $("#formParking #xCapacity").val(),
+                    xAddress: $("#formParking #xAddress").val(),
+                    xDescription: $("#formParking #xDescription").val(),
+                    xSettings: $("#formParking #xSettings").val(),
+                    xTariffId: $("#formParking #selectPrice").val(),
+                }, function (data, status) {
+                    if (status == "success") location.reload();
+                    else alert(status + "\n" + data);
+                });
+        }
+    </script>
+}

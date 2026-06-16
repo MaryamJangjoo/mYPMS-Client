@@ -1,0 +1,251 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var serverIp = Environment.GetEnvironmentVariable("SERVER_IP");
+    var wsUrl = $"wss://{serverIp}/ws";
+    var streamUrl = $"https://{serverIp}/camera_1/mjpeg-stream?draw_objects=1&draw_motion=1&draw_object_mask=1&draw_motion_mask=1&draw_zones=1&draw_post_processor_mask=1";
+}
+
+<div class="w3-cell-row w3-center">
+    @{
+        int val = 0;
+        try
+        {
+            val = HttpContextAccessor.HttpContext!.Session.GetInt32("dir")!.Value;
+        }
+        catch { }
+        
+        if ((val & 1) == 1)
+        {
+            <div class="w3-cell w3-padding-small">
+                <div class="w3-card-4">
+                    <header class="w3-container">
+                        <h1 class="fontYekan">Input</h1>
+                    </header>
+                    
+                    <img src="@streamUrl" 
+                         style="width:100%; height:400px; border: 1px solid #ddd; object-fit: cover;">
+                    
+                    <footer class="w3-container w3-padding">
+                        <button class="w3-button w3-teal">
+                            <i class="fa fa-level-down w3-xlarge"></i>
+                        </button>
+                        <button class="w3-button w3-teal">
+                            <i class="fa fa-level-up w3-xlarge"></i>
+                        </button>
+                        @if (val == 1)
+                        {
+                            <button class="w3-button w3-teal" onclick="zoomVideo(2, 1);">
+                                <i class="fa fa-search-minus w3-xlarge"></i>
+                            </button>
+                            <button class="w3-button w3-teal" onclick="zoomVideo(1, 1);">
+                                <i class="fa fa-search-plus w3-xlarge"></i>
+                            </button>
+                        }
+                    </footer>
+                </div>
+            </div>
+        }
+        
+        if ((val & 2) == 2)
+        {
+            <div class="w3-cell w3-padding-small">
+                <div class="w3-card-4">
+                    <header class="w3-container">
+                        <h1 class="fontYekan">Output</h1>
+                    </header>
+                    
+                    <img src="@streamUrl" 
+                         style="width:100%; height:400px; border: 1px solid #ddd; object-fit: cover;">
+                    
+                    <footer class="w3-container w3-padding">
+                        <button class="w3-button w3-teal">
+                            <i class="fa fa-level-down w3-xlarge"></i>
+                        </button>
+                        <button class="w3-button w3-teal">
+                            <i class="fa fa-level-up w3-xlarge"></i>
+                        </button>
+                        @if (val == 2)
+                        {
+                            <button class="w3-button w3-teal" onclick="zoomVideo(2, 2);">
+                                <i class="fa fa-search-minus w3-xlarge"></i>
+                            </button>
+                            <button class="w3-button w3-teal" onclick="zoomVideo(1, 2);">
+                                <i class="fa fa-search-plus w3-xlarge"></i>
+                            </button>
+                        }
+                    </footer>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="w3-row w3-margin-top">
+    <div class="w3-container">
+        <div class="w3-card-4">
+            <header class="w3-container w3-teal">
+                <h2 class="fontYekan">Recently Detected License Plates</h2>
+            </header>
+            <div class="w3-container w3-padding" id="plates-container">
+                <div class="w3-center" id="plates-loading">
+                    <i class="fa fa-spinner fa-spin"></i> Connecting to server...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let ws = null;
+    const WS_URL = '@wsUrl';
+
+    function connectWebSocket() {
+        console.log('Connecting to WebSocket:', WS_URL);
+        ws = new WebSocket(WS_URL);
+        
+        ws.onopen = function() {
+            console.log('✅ WebSocket connected');
+            const loadingEl = document.getElementById('plates-loading');
+            if (loadingEl) {
+                loadingEl.innerHTML = '<i class="fa fa-check-circle"></i> Connected to server, waiting for plates...';
+            }
+        };
+        
+        ws.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('📨 WebSocket message:', data);
+                
+                if (data.type === 'new_plate') {
+                    const plate = data.data.plate;
+                    const confidence = data.data.confidence;
+                    const cameraId = data.data.camera_id;
+                    const timestamp = new Date(data.data.timestamp || Date.now()).toLocaleTimeString('fa-IR');
+                    addPlateToList(plate, confidence, cameraId, timestamp);
+                }
+                
+                if (data.type === 'raw_log') {
+                    const logLine = data.data.log;
+                    console.log('📜 Raw log received:', logLine);
+                    
+                    let plate = null;
+                    let confidence = null;
+                    
+                    const plateMatch = logLine.match(/Plate detected:\s*(\S+)/);
+                    const plateMatch2 = logLine.match(/پلاک\s+'([^']+)'/);
+                    const plateMatch3 = logLine.match(/"plate":\s*"([^"]+)"/);
+                    
+                    if (plateMatch) {
+                        plate = plateMatch[1];
+                    } else if (plateMatch2) {
+                        plate = plateMatch2[1];
+                    } else if (plateMatch3) {
+                        plate = plateMatch3[1];
+                    }
+                    
+                    const confMatch = logLine.match(/اطمینان=([0-9.]+)/);
+                    if (confMatch) confidence = parseFloat(confMatch[1]);
+                    
+                    if (plate && confidence) {
+                        console.log(`🎯 Extracted plate from log: ${plate} (${(confidence * 100).toFixed(1)}%)`);
+                        const timestamp = new Date().toLocaleTimeString('fa-IR');
+                        addPlateToList(plate, confidence, 'camera_1', timestamp);
+                    }
+                }
+                
+                if (data.type === 'history') {
+                    displayHistory(data.data);
+                }
+            } catch (err) {
+                console.error('Error parsing message:', err);
+            }
+        };
+        
+        ws.onerror = function(error) {
+            console.error('❌ WebSocket error:', error);
+            const loadingEl = document.getElementById('plates-loading');
+            if (loadingEl) {
+                loadingEl.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Server connection error';
+            }
+        };
+        
+        ws.onclose = function() {
+            console.log('🔴 WebSocket disconnected, reconnecting in 5 seconds...');
+            const loadingEl = document.getElementById('plates-loading');
+            if (loadingEl) {
+                loadingEl.innerHTML = '<i class="fa fa-refresh fa-spin"></i> Disconnected, retrying...';
+            }
+            setTimeout(connectWebSocket, 5000);
+        };
+    }
+
+    function addPlateToList(plate, confidence, cameraId, timestamp) {
+        console.log('🎯 Adding plate:', plate);
+        const container = document.getElementById('plates-container');
+        if (!container) {
+            console.error('plates-container not found');
+            return;
+        }
+        
+        const loading = document.getElementById('plates-loading');
+        if (loading) loading.remove();
+        
+        const plateCard = document.createElement('div');
+        plateCard.className = 'plate-card w3-card w3-margin-bottom';
+        plateCard.style.animation = 'fadeIn 0.5s ease-in-out';
+        plateCard.innerHTML = `
+            <div class="w3-row w3-padding">
+                <div class="w3-col s12 m4 l3">
+                    <div class="plate-number">${escapeHtml(plate)}</div>
+                </div>
+                <div class="w3-col s12 m4 l3">
+                    <div class="plate-confidence">${(confidence * 100).toFixed(1)}%</div>
+                </div>
+                <div class="w3-col s12 m4 l3">
+                    <div class="plate-camera">${cameraId === 'camera_1' ? 'Main Camera' : cameraId}</div>
+                </div>
+                <div class="w3-col s12 m4 l3">
+                    <div class="plate-time">${timestamp}</div>
+                </div>
+            </div>
+        `;
+        
+        container.insertBefore(plateCard, container.firstChild);
+        
+        while (container.children.length > 20) {
+            container.removeChild(container.lastChild);
+        }
+    }
+    
+    function displayHistory(plates) {
+        console.log('📜 Displaying history:', plates?.length, 'plates');
+        const container = document.getElementById('plates-container');
+        const loading = document.getElementById('plates-loading');
+        if (!container) return;
+        
+        if (loading) loading.remove();
+        container.innerHTML = '';
+        
+        if (plates && plates.length > 0) {
+            plates.reverse().forEach(plate => {
+                addPlateToList(
+                    plate.plate, 
+                    plate.confidence, 
+                    plate.camera_id, 
+                    new Date(plate.timestamp).toLocaleTimeString('fa-IR')
+                );
+            });
+        }
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    connectWebSocket();
+    console.log('✅ WebSocket service started');
+</script>

@@ -1,0 +1,166 @@
+﻿@model IEnumerable<mYPMS.Models.tTariff>
+@using NonFactors.Mvc.Grid;
+@{
+    ViewData["Title"] = "تعرفه";
+}
+<div class="w3-container">
+    <!--BEGIN Title and Bar-->
+    <div class="w3-display-container" style="height:70px;">
+        <div class="w3-display-left">
+            <a asp-action="Index"><i class="fa fa-arrow-circle-left w3-xxxlarge w3-text-green w3-hover-text-lime"></i></a>
+        </div>
+        <div class="w3-display-middle">
+            <h1 class="w3-text-black"><b>@ViewData["Title"]</b></h1>
+        </div>
+        <div class="w3-display-right">
+            <i class="fa fa-plus-circle w3-xxxlarge w3-text-red w3-hover-text-lime" style="cursor:pointer" onclick="getPrice();"></i>
+        </div>
+    </div>
+    <!--END Title and Bar-->
+    <!--BEGIN Search Bar-->
+    <div class="w3-row w3-padding-large">
+        <div class="w3-col w3-right" style="width:50px;"><i class="fa fa-search w3-xxlarge"></i></div>
+        <div class="w3-rest"><input id="search" class="w3-input w3-border w3-round-large" type="text" /></div>
+    </div>
+    <!--END Search Bar-->
+    <!--BEGIN Data Table-->
+    <div class="w3-container w3-padding-large">
+        @(Html.Grid(Model).Id("dataTable")
+            .Build(columns =>
+            {
+                columns.Add(model => model.xTitle).Titled(Html.DisplayNameFor(model => model.xTitle)).Css("w3-right-align");
+                columns.Add(model => model.xDescription).Titled(Html.DisplayNameFor(model => model.xDescription)).Css("w3-right-align");
+                columns.Add(model => @"<div class=""w3-cell-row"">
+                    <div class=""w3-container w3-cell"">
+                    <i style=""cursor:pointer;"" onclick=""getPrice('" + model.xId + @"');"" class=""fa fa-pencil-square-o w3-xlarge w3-hover-text-red""></i>
+                    </div>
+                    <div class=""w3-container w3-cell"">
+                    <form action=""/Settings/PriceDelete"" method=""post"" id=""PriceDeleteForm_" + model.xId + @""">
+                    <input type=""hidden"" value=" + model.xId + @" name=""xId"" id=""xId"" />
+                    <i style=""cursor:pointer;"" onclick=""document.getElementById('PriceDeleteForm_" + model.xId + @"').submit();"" class=""fa fa-trash-o w3-xlarge w3-hover-text-red""></i>
+                    </form>
+                    </div>
+                    </div>").Encoded(false).Width(120);
+                        })
+            .RowAttributed(model => new { @class = "w3-hover-lime", data_id = model.xId })
+            .Filterable()
+            .Css("w3-table-all w3-card-4 w3-right-align")
+            .Sortable().Pageable())
+    </div>
+    <!--END Data Table--><!--START MODAL DATA EDIT-->
+    <div id="priceEdit" class="w3-modal">
+        <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-light-gray">
+                <span onclick="document.getElementById('priceEdit').style.display='none'"
+                      class="w3-button w3-display-topleft fa fa-window-close w3-xlarge"></span>
+                <h2>جدید / ویرایش تعرفه</h2>
+            </header>
+
+            <form asp-action="priceEdit" method="post" id="formPrice">
+                <div class="w3-container w3-padding" id="pricecontent">
+                    <input type="hidden" id="xId" name="xId" />
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right"><lable>@Html.DisplayNameFor(x=>x.xTitle)</lable></div>
+                        <div class="w3-threequarter"><input id="xTitle" class="w3-input w3-round" type="text" placeholder="عنوان" /></div>
+                    </div>
+                    <div class="w3-container">
+                        <div class="w3-third w3-padding-large">
+                            <lable>@Html.DisplayNameFor(x=>x.xWholeDayPrice)</lable>
+                            <input id="xWholeDayPrice" class="w3-input w3-round" type="number" />
+                        </div>
+                        <div class="w3-third w3-padding-large">
+                            <lable>@Html.DisplayNameFor(x=>x.xDayHourPrice)</lable>
+                            <input id="xDayHourPrice" class="w3-input w3-round" type="number" />
+                        </div>
+                        <div class="w3-third w3-padding-large">
+                            <lable>@Html.DisplayNameFor(x=>x.xEntryPrice)</lable>
+                            <input id="xEntryPrice" class="w3-input w3-round" type="number" />
+                        </div>
+                    </div>
+                    <div class="w3-container">
+                        <div class="w3-third w3-padding-large">
+                            <lable>@Html.DisplayNameFor(x=>x.xNightEndHour)</lable>
+                            <input id="xNightEndHour" class="w3-input w3-round" type="number" />
+                        </div>
+                        <div class="w3-third w3-padding-large">
+                            <lable>@Html.DisplayNameFor(x=>x.xNightStartHour)</lable>
+                            <input id="xNightStartHour" class="w3-input w3-round" type="number" />
+                        </div>
+                        <div class="w3-third w3-padding-large">
+                            <lable>@Html.DisplayNameFor(x=>x.xNightHourPrice)</lable>
+                            <input id="xNightHourPrice" class="w3-input w3-round" type="number" />
+                        </div>
+                    </div>
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right"><lable>@Html.DisplayNameFor(x=>x.xDescription)</lable></div>
+                        <div class="w3-threequarter"><textarea id="xDescription" class="w3-input w3-round" placeholder="توضیحات"></textarea></div>
+                    </div>
+                </div>
+            </form>
+            <footer class="w3-container w3-light-gray">
+                <div class="w3-cell-row w3-center">
+                    <div class="w3-container w3-cell">
+                        <button class="w3-button w3-green w3-hover-lime w3-round" onclick="setPrice();">ذخیره</button>
+                    </div>
+                    <div class="w3-container w3-cell">
+                        <button class="w3-button w3-red w3-hover-lime w3-round" onclick="document.getElementById('priceEdit').style.display='none'">انصراف</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!--END MODAL DATA EDIT-->
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        function getPrice(id = 0) {
+            if (id == null || id == 0) {
+                $("#formPrice #xId").val(0);
+                $("#formPrice #xTitle").val("");
+                $("#formPrice #xEntryPrice").val(0);
+                $("#formPrice #xDayHourPrice").val(0);
+                $("#formPrice #xNightHourPrice").val(0);
+                $("#formPrice #xWholeDayPrice").val(0);
+                $("#formPrice #xNightStartHour").val(0);
+                $("#formPrice #xNightEndHour").val(0);
+                $("#formPrice #xDescription").val("");
+                $("#priceEdit").css("display", "block");
+            } else {
+                $.getJSON(
+                    "/Settings/PriceExists",
+                    { "xId": id },
+                    function (data) {
+                        $("#formPrice #xId").val(data.xId);
+                        $("#formPrice #xTitle").val(data.xTitle);
+                        $("#formPrice #xEntryPrice").val(data.xEntryPrice);
+                        $("#formPrice #xDayHourPrice").val(data.xDayHourPrice);
+                        $("#formPrice #xNightHourPrice").val(data.xNightHourPrice);
+                        $("#formPrice #xWholeDayPrice").val(data.xWholeDayPrice);
+                        $("#formPrice #xNightStartHour").val(data.xNightStartHour);
+                        $("#formPrice #xNightEndHour").val(data.xNightEndHour);
+                        $("#formPrice #xDescription").val(data.xDescription);
+                        $("#priceEdit").css("display", "block");
+                    });
+            }
+        }
+        function setPrice() {
+            $.post("/Settings/PriceEdit",
+                {
+                    xId: $("#formPrice #xId").val(),
+                    xTitle: $("#formPrice #xTitle").val(),
+                    xEntryPrice: $("#formPrice #xEntryPrice").val(),
+                    xDayHourPrice: $("#formPrice #xDayHourPrice").val(),
+                    xNightHourPrice: $("#formPrice #xNightHourPrice").val(),
+                    xWholeDayPrice: $("#formPrice #xWholeDayPrice").val(),
+                    xNightStartHour: $("#formPrice #xNightStartHour").val(),
+                    xNightEndHour: $("#formPrice #xNightEndHour").val(),
+                    xDescription: $("#formPrice #xDescription").val(),
+                }, function (data, status) {
+                    if (status == "success") location.reload();
+                    else alert(status + "\n" + data);
+                });
+        }
+    </script>
+}

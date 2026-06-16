@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "پارکینگ ها";
+}
+<div class="w3-container">
+    <!--BEGIN Title and Bar-->
+    <div class="w3-display-container" style="height:70px;">
+        <div class="w3-display-left">
+            <a asp-action="Index"><i class="fa fa-arrow-circle-left w3-xxxlarge w3-text-green w3-hover-text-lime"></i></a>
+        </div>
+        <div class="w3-display-middle">
+            <h1 class="w3-text-black"><b>@ViewData["Title"]</b></h1>
+        </div>
+        <div class="w3-display-right">
+            <i class="fa fa-plus-circle w3-xxxlarge w3-text-red w3-hover-text-lime" style="cursor:pointer" onclick=""></i>
+        </div>
+    </div>
+    <!--END Title and Bar-->
+    <!--BEGIN Search Bar-->
+    <div class="w3-row w3-padding-large">
+        <div class="w3-col w3-right" style="width:50px;"><i class="fa fa-search w3-xxlarge"></i></div>
+        <div class="w3-rest"><input id="search" class="w3-input w3-border w3-round-large" type="text" /></div>
+    </div>
+    <!--END Search Bar-->
+    <!--BEGIN Data Table-->
+    <div class="w3-container w3-padding-large">
+        <table class="w3-table-all w3-hoverable w3-card-4 w3-right-align">
+            <thead>
+                <tr>
+                    <th class="w3-center">Firstname</th>
+                    <th class="w3-center">Lastname</th>
+                    <th class="w3-center">Email</th>
+                </tr>
+            </thead>
+            <tbody id="dataTable">
+                <tr class="w3-hover-lime">
+                    <td class="w3-right-align">John</td>
+                    <td class="w3-right-align">Doe</td>
+                    <td class="w3-right-align">john@example.com</td>
+                </tr>
+                <tr class="w3-hover-lime">
+                    <td class="w3-right-align">Mary</td>
+                    <td class="w3-right-align">Moe</td>
+                    <td class="w3-right-align">mary@mail.com</td>
+                </tr>
+                <tr class="w3-hover-lime">
+                    <td class="w3-right-align">July</td>
+                    <td class="w3-right-align">Dooley</td>
+                    <td class="w3-right-align">july@greatstuff.com</td>
+                </tr>
+                <tr class="w3-hover-lime">
+                    <td class="w3-right-align">Anja</td>
+                    <td class="w3-right-align">Ravendale</td>
+                    <td class="w3-right-align">a_r@test.com</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--END Data Table-->
+</div>

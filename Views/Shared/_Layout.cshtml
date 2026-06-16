@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>@ViewData["Title"] - Parking Management System</title>
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />*@
+    <link rel="stylesheet" href="~/css/font-awesome.min.css" asp-append-version="false" />
+    <link rel="stylesheet" href="~/css/w3.css" asp-append-version="false" />
+    <link rel="stylesheet" href="~/css/w3-colors-2021.css" asp-append-version="false" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mvc-grid/mvc-grid.css" />
+    @await RenderSectionAsync("Head",false);
+</head>
+<body dir="rtl">
+    <header>
+        <div class="w3-center">
+            <div class="w3-bar w3-light-grey w3-border">
+                <a class="w3-bar-item w3-button w3-hover-lime" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"><svg bootstrap-icon="BoxArrowLeft" width="24" height="24" aria-label="خروج"></svg></a>
+                <a id="btFullScreen" href="#" class="w3-bar-item w3-button w3-hover-lime"><svg bootstrap-icon="Fullscreen" width="24" height="24" aria-label="تمام صفحه"></svg></a>
+                <a asp-controller="Home" asp-action="Welcome" class="w3-bar-item w3-button w3-hover-lime"><svg bootstrap-icon="SignTurnSlightLeft" width="24" height="24" aria-label="تغییر دروازه"></svg></a>
+                <a asp-controller="Report" asp-action="Today" class="w3-bar-item w3-button w3-hover-lime"><svg bootstrap-icon="CarFrontFill" width="24" height="24" aria-label="ترددهای امروز"></svg></a>
+                <a asp-controller="Report" asp-action="Index" class="w3-bar-item w3-button w3-hover-lime"><svg bootstrap-icon="ArrowLeftRight" width="24" height="24" aria-label="گزارش تردد"></svg></a>
+                <a asp-controller="Settings" asp-action="Index" class="w3-bar-item w3-button w3-hover-lime"><svg bootstrap-icon="Gear" width="24" height="24" aria-label="تنظیمات"></svg></a>
+                <a asp-controller="Home" asp-action="Index" class="w3-bar-item w3-button w3-green w3-hover-lime"><svg bootstrap-icon="HouseFill" width="24" height="24" aria-label="خانه"></svg></a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div id="modalImage" class="w3-modal w3-center w3-padding" onclick="this.style.display='none'">
+            <img class="w3-image w3-modal-content" id="modalImageContent" style="width: auto; height: inherit;"/>
+        </div>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 1401 - megafa Yakand PMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+        <div id="snackbar"></div>
+    </footer>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/jquery.blockUI.js"></script>
+    <script src="~/js/mvc-grid/mvc-grid.js"></script>
+    <script>document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));</script>
+    <script>
+        window.dotNetReferences = window.dotNetReferences || {};
+
+        function setDotNetReference(key, reference) {
+            window.dotNetReferences[key] = reference;
+        }
+
+        function removeDotNetReference(key) {
+            delete window.dotNetReferences[key];
+        }
+
+        function getDotNetReference(key) {
+            return window.dotNetReferences[key];
+        }
+
+        function showSnackbar(message) {
+            var snackbar = document.getElementById("snackbar");
+            if (snackbar) {
+                snackbar.innerHTML = message;
+                snackbar.className = "show";
+                setTimeout(function() { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            }
+        }
+    </script>
+    
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

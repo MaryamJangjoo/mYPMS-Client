@@ -1,0 +1,263 @@
+﻿@model IQueryable<mYPMS.Models.tTagList>
+@using NonFactors.Mvc.Grid;
+@{
+    ViewData["Title"] = "کارت گروه";
+}
+@section Head
+{
+    <link rel="stylesheet" href="~/lib/pdp/css/persianDatepicker-default.css" asp-append-version="false" />
+}
+<div class="w3-container">
+    <!--BEGIN Title and Bar-->
+    <div class="w3-display-container" style="height:70px;">
+        <div class="w3-display-left">
+            <a asp-action="Index"><i class="fa fa-arrow-circle-left w3-xxxlarge w3-text-green w3-hover-text-lime"></i></a>
+        </div>
+        <div class="w3-display-middle">
+            <h1 class="w3-text-black"><b>@ViewData["Title"]</b></h1>
+        </div>
+        <div class="w3-display-right">
+            <i class="fa fa-plus-circle w3-xxxlarge w3-text-red w3-hover-text-lime" style="cursor:pointer" onclick="modalTag();"></i>
+        </div>
+    </div>
+    <!--END Title and Bar-->
+    <!--BEGIN Search Bar-->
+    <div class="w3-row w3-padding-large">
+        <div class="w3-col w3-right" style="width:50px;"><i class="fa fa-search w3-xxlarge"></i></div>
+        <div class="w3-rest"><input id="search" class="w3-input w3-border w3-round-large" type="text" /></div>
+    </div>
+    <!--END Search Bar-->
+    <!--BEGIN TAG Section-->
+    <div class="w3-col s6 m4 l2 w3-right w3-padding-large">
+        <div class="w3-card-4 w3-2021-mint w3-display-container w3-hover-lime" style="aspect-ratio:1/1;cursor:pointer;" onclick="modalGroup();">
+            <i class="fa fa-plus-circle w3-jumbo w3-display-middle"></i>
+        </div>
+    </div>
+    <div id="tags"></div>
+    <!--END TAG Section-->
+    <!--BEGIN Data Table-->
+    <div class="w3-container w3-padding-large">
+        @Html.AjaxGrid(Url.Action("CardGroup"))
+    </div>
+    <!--END Data Table-->
+    <!--START MODAL GROUP EDIT-->
+    <div id="modalGroup" class="w3-modal">
+        <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-light-gray">
+                <div class="w3-display-topleft">
+                    <span onclick="groupDelete();" class="w3-button fa fa-trash w3-xlarge"></span>
+                    <span onclick="$('#modalGroup').hide();" class="w3-button fa fa-window-close w3-xlarge"></span>
+                </div>
+                <h2>جدید / ویرایش کارت گروه</h2>
+            </header>
+            <form asp-action="TagmodalGroup" method="post" id="formTagGroup">
+                <div class="w3-container w3-padding" id="taggroupcontent">
+                    <input type="hidden" id="xId" name="xId" />
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right w3-cell"><lable>عنوان</lable></div>
+                        <div class="w3-threequarter w3-cell"><input id="xName" class="w3-input w3-round" type="text" placeholder="عنوان" /></div>
+                    </div>
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right"><lable>تعرفه</lable></div>
+                        <div class="w3-threequarter"><select id="selectPrice" class="w3-select"><option disabled selected value=0>انتخاب تعرفه</option></select></div>
+                    </div>
+                </div>
+            </form>
+            <footer class="w3-container w3-light-gray">
+                <div class="w3-cell-row w3-center">
+                    <div class="w3-container w3-cell">
+                        <button class="w3-button w3-green w3-hover-lime w3-round" onclick="groupUpdate();">ذخیره</button>
+                    </div>
+                    <div class="w3-container w3-cell">
+                        <button class="w3-button w3-red w3-hover-lime w3-round" onclick="$('#modalGroup').hide();">انصراف</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!--END MODAL GROUP EDIT-->
+    <!--START MODAL TAG EDIT-->
+    <div id="modalTag" class="w3-modal">
+        <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-light-gray">
+                <div class="w3-display-topleft">
+                    <span onclick="$('#modalTag').hide();" class="w3-button fa fa-window-close w3-xlarge"></span>
+                </div>
+                <h2>جدید / ویرایش کارت</h2>
+            </header>
+            <form id="formTag">
+                <div class="w3-container w3-padding">
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right"><lable>کارت گروه</lable></div>
+                        <div class="w3-threequarter"><select id="selectGroup" class="w3-select"><option disabled selected value=0>انتخاب کارت گروه</option></select></div>
+                    </div>
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right w3-cell"><lable>شماره کارت</lable></div>
+                        <div class="w3-threequarter w3-cell"><input id="xId" class="w3-input w3-round" type="text" placeholder="شماره کارت" /></div>
+                    </div>
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right"><lable>از تاریخ</lable></div>
+                        <div class="w3-threequarter w3-cell">
+                            <input id="xExpirationDate" autocomplete="off" class="w3-input w3-round" />
+                        </div>
+                    </div>
+                    <div class="w3-cell-row w3-container">
+                        <div class="w3-quarter w3-right w3-cell"><lable>توضیحات</lable></div>
+                        <div class="w3-threequarter w3-cell"><input id="xComment" class="w3-input w3-round" type="text" placeholder="شماره کارت" /></div>
+                    </div>
+                </div>
+            </form>
+            <footer class="w3-container w3-light-gray">
+                <div class="w3-cell-row w3-center">
+                    <div class="w3-container w3-cell">
+                        <button class="w3-button w3-green w3-hover-lime w3-round" onclick="tagUpdate();">ذخیره</button>
+                    </div>
+                    <div class="w3-container w3-cell">
+                        <button class="w3-button w3-red w3-hover-lime w3-round" onclick="$('#modalTag').hide();">انصراف</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!--END MODAL TAG EDIT-->
+</div>
+@section Scripts
+{
+    <script src="~/lib/pdp/js/persianDatepicker.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            getGroup();
+            $.getJSON(
+                "/Settings/PriceExists",
+                function (data) {
+                    $("#selectPrice option:gt(0)").remove();
+                    $.each(data, function () { $("#selectPrice").append($("<option></option>").attr("value", this.xId).text(this.xTitle)); });
+                }
+            );
+            $("#formTag #xExpirationDate").persianDatepicker({
+                formatDate: "YYYY/0M/0D",
+            });
+        });
+        function getGroup() {
+            $("#tags").html("");
+            $.getJSON("/Settings/getTagGroup",
+                function (data) {
+                    $("#selectGroup option:gt(0)").remove();
+                    $.each(data, function () {
+                        let tag = `
+                            <div class="w3-col s6 m4 l2 w3-right w3-padding-large">
+                                <div class="w3-card-4 w3-2021-mint w3-display-container w3-hover-lime" style="aspect-ratio:1/1;cursor:pointer;" onclick="filterBy('${this.xId}')">
+                                    <h1 class="w3-display-middle" style="margin:0;">${this.xName}</h1>
+                                    <i class="fa fa-ellipsis-h w3-xlarge w3-padding w3-hover-text-red w3-display-bottomleft" onclick="modalGroup('${this.xId}')"></i>
+                                </div>
+                            </div>`;
+                        $("#tags").append(tag);
+                        $("#selectGroup").append($("<option></option>").attr("value", this.xId).text(this.xName));
+                    });
+                }
+            );
+        }
+        function filterBy(id=null) {
+            const grid = new MvcGrid(document.querySelector(".mvc-grid"));
+            id==null?grid.url.searchParams.delete("groupId"):grid.url.searchParams.set("groupId", id);
+            grid.reload();
+        }
+        function modalGroup(id = null) {
+            window.event.stopPropagation();
+            if (id) {
+                $.getJSON("/Settings/getTagGroup?id=" + id,
+                    function (data) {
+                        $("#formTagGroup #xId").val(data[0].xId);
+                        $("#formTagGroup #xName").val(data[0].xName);
+                        $("#formTagGroup #selectPrice").val(data[0].xTariffId);
+                    }
+                ).done(function () {
+                    $("#modalGroup").show();
+                }).fail(function () {
+                    snack("خطا در دریافت اطلاعات");
+                });
+            } else {
+                $("#formTagGroup #xId").val(0);
+                $("#formTagGroup #xName").val("");
+                $("#formTagGroup #selectPrice").val(0);
+                $("#modalGroup").show();
+            }
+        }
+        function modalTag(id = null) {
+            if (id) {
+                $.getJSON("/Settings/TagExists?xId=" + id,
+                    function (data) {
+                        let jdf = new jDateFunctions();
+                        let d = jdf.gregorian_to_jalali(new Date(data.xExpirationDate));
+                        $("#formTag #xId").val(data.xId);
+                        $("#formTag #selectGroup").val(data.xTagGroupId);
+                        $("#formTag #xExpirationDate").val(d);
+                        $("#formTag #xComment").val(data.xComment);
+                    }
+                ).done(function () {
+                    $("#modalTag").show();
+                }).fail(function () {
+                    snack("خطا در دریافت اطلاعات");
+                });
+            } else {
+                $("#formTag #xId").val("");
+                $("#formTag #selectGroup").val(0);
+                $("#formTag #xExpirationDate").val("");
+                $("#formTag #xComment").val("");
+                $("#modalTag").show();
+            }
+        }
+        function groupUpdate(){
+            $.post("/Settings/TagGroupEdit",
+                {
+                    xId: $("#formTagGroup #xId").val(),
+                    xName: $("#formTagGroup #xName").val(),
+                    xTariffId: $("#formTagGroup #selectPrice").val(),
+                }, function (data, status) {
+                    if (status == "success"){
+                        getGroup();
+                        filterBy();
+                    }
+                    else alert(status + "\n" + data);
+                }).done(function(){
+                    $("#modalGroup").hide();
+                });
+        }
+        function tagUpdate(){
+            $.post("/Settings/TagEdit",
+                {
+                    xId: $("#formTag #xId").val(),
+                    xTagGroupId: $("#formTag #selectGroup").val(),
+                    xExpirationDate: $("#formTag #xExpirationDate").val(),
+                    xComment: $("#formTag #xComment").val(),
+                }, function (data, status) {
+                    if (status == "success"){
+                        snack("شماره کارت با موفقیت بروز شد")
+                        filterBy();
+                    }
+                    else snack(status + "<br/>" + data);
+                }).done(function(){
+                    $("#modalTag").hide();
+                }).fail(function(e){
+                    snack("خطای " + e.status + "<br/>" + e.responseText);
+                });
+        }
+        function groupDelete() {
+            //if(id==0)return;
+            $.post("/Settings/TagGroupDelete",
+                {
+                    xId: $("#formTagGroup #xId").val(),
+                }, function (data, status) {
+                    if (status == "success") {
+                        getGroup();
+                        filterBy();
+                    }
+                    else alert(status + "\n" + data);
+                }).done(function () {
+                    $("#modalGroup").hide();
+                }).fail(function(e){
+                    snack("خطای " + e.status + "<br/>" + e.responseText);
+                });
+        }
+    </script>
+}

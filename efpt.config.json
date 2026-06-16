@@ -1,0 +1,77 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "mYPMSContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": "Data",
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "mYPMS",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "[dbo].[tGates]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tParkings]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tPaymentMethods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tSettings]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tTariffs]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tTraffics]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tUsers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[vParked]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[GetFreeLots]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[SumReport]",
+         "ObjectType": 1
+      }
+   ],
+   "UiHint": "mys.ParkingProxy.dbo",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

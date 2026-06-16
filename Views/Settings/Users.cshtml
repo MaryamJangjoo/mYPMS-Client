@@ -1,0 +1,55 @@
+﻿@model mYPMS.Models.UsersAndRoles
+@using NonFactors.Mvc.Grid
+@{
+    ViewData["Title"] = "کاربران";
+}
+@section Head
+    {
+}
+    <div class="w3-container">
+        <!--BEGIN Title and Bar-->
+        <div class="w3-display-container" style="height:70px;">
+            <div class="w3-display-left">
+                <a asp-action="Index"><i class="fa fa-arrow-circle-left w3-xxxlarge w3-text-green w3-hover-text-lime"></i></a>
+            </div>
+            <div class="w3-display-middle">
+                <h1 class="w3-text-black"><b>@ViewData["Title"]</b></h1>
+            </div>
+            <div class="w3-display-right">
+                <i class="fa fa-plus-circle w3-xxxlarge w3-text-red w3-hover-text-lime" style="cursor:pointer" onclick="modalUser();"></i>
+            </div>
+        </div>
+        <!--END Title and Bar-->
+        <!--BEGIN Roles List-->
+        @*
+    <div class="w3-col s6 m4 l2 w3-right w3-padding-large">
+    <div class="w3-card-4 w3-2021-mint w3-display-container w3-hover-lime" style="aspect-ratio:1/1;cursor:pointer;" onclick="modalRole();">
+    <i class="fa fa-plus-circle w3-jumbo w3-display-middle"></i>
+    </div>
+    </div>
+    *@
+        <div id="roles">
+            @await Html.PartialAsync("./_partialRoles",viewData: ViewData);
+        </div>
+        <!--END Roles List-->
+        <!--BEGIN Users List-->
+        <div id="users">
+            @await Html.PartialAsync("./_partialUsers",viewData: ViewData);
+        </div>
+        <!--END Users List-->
+    </div>
+    @section Scripts
+    {
+    <script type="text/javascript">
+        function modalUser(name = null, pass = null, role = null) {
+            $("#username").val(name);
+            $("#password").val(pass);
+            role == "Admin" ? $("#chRole").prop("checked", true) : $("#chRole").prop("checked", false);
+            $("#modalUser").show();
+        }
+        function userUpdate() {
+            $("#chRole").prop("checked") == true ? $("#role").val("Admin") : $("#role").val(null);
+            $("#formUser").submit();
+        }
+    </script>
+}

@@ -1,0 +1,28 @@
+﻿@model IQueryable<mYPMS.Models.tTagList>
+@using NonFactors.Mvc.Grid;
+@(Html
+    .Grid(Model).Id("dataTable")
+    .Build(columns =>
+    {
+        columns.Add(model => model.xId).Titled("شماره کارت").Css("w3-right-align");
+        columns.Add(model => model.xTagGroup.xName).Titled("گروه").Css("w3-right-align");
+        columns.Add(model => model.xExpirationDate).Titled("تاریخ انقضاء").Css("w3-right-align");
+        columns.Add(model => model.xComment).Titled("توضیحات").Css("w3-right-align");
+        columns.Add(model => @"<div class=""w3-cell-row"">
+    <div class=""w3-container w3-cell"">
+    <i style=""cursor:pointer;"" onclick=""modalTag('" + model.xId + @"');"" class=""fa fa-pencil-square-o w3-xlarge w3-hover-text-red""></i>
+    </div>
+    <div class=""w3-container w3-cell"">
+    <form action=""/Settings/TagDelete"" method=""post"" id=""TagDeleteForm_" + model.xId + @""">
+    <input type=""hidden"" value=" + model.xId + @" name=""id"" id=""id"" />
+    <i style=""cursor:pointer;"" onclick=""document.getElementById('TagDeleteForm_" + model.xId + @"').submit();"" class=""fa fa-trash-o w3-xlarge w3-hover-text-red""></i>
+    </form>
+    </div>
+    </div>").Encoded(false).Width(120).Titled("عملیات").Css("w3-center");
+    })
+    .Empty("داه ای وجود ندارد")
+    .RowAttributed(model => new { @class = "w3-hover-lime", data_id = model.xId })
+    .Filterable()
+    .Css("w3-table-all w3-card-4 w3-right-align")
+    .Sortable().Pageable()
+)

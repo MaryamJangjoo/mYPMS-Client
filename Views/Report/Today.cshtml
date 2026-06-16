@@ -1,0 +1,101 @@
+﻿@using NonFactors.Mvc.Grid;
+@{
+    ViewData["Title"] = "ترددهای امروز";
+}
+
+<div class="w3-container">
+    <!--BEGIN Title and Bar-->
+    <div class="w3-display-container" style="height:70px;">
+        <div class="w3-display-left">
+            <a asp-controller="Home" asp-action="Index"><i class="fa fa-arrow-circle-left w3-xxxlarge w3-text-green w3-hover-text-lime"></i></a>
+        </div>
+        <div class="w3-display-middle">
+            <h1 class="w3-text-black"><b>@ViewData["Title"]</b></h1>
+        </div>
+    </div>
+    <!--END Title and Bar-->
+    <!--BEGIN Search Bar-->
+    <!--END Search Bar-->
+    <!--BEGIN Data Table-->
+    <div class="w3-container w3-padding-large">
+        @Html.AjaxGrid(Url.Action("Today"))
+    </div>
+    <!--END Data Table-->
+    <!--START MODAL DETAIL-->
+    <div id="modalDetail" class="w3-modal" style="padding-top:0px;">
+        <div class="w3-modal-content w3-card-4" style="font-weight:bold;">
+            <header class="w3-container w3-light-gray">
+                <div class="w3-display-topleft">
+                    <span onclick="$('#modalDetail').hide();" class="w3-button fa fa-window-close w3-xlarge"></span>
+                </div>
+                <h2 id="modalTitle" class="w3-center"><b>جزئیات تردد</b></h2>
+            </header>
+            <input type="hidden" id="modalId" />
+            <div class="w3-container">
+                <div class="w3-half w3-center">
+                    <h3><b>تصویر ورود</b></h3>
+                    <img id="modalImageEn" class="w3-image w3-padding-small" onerror="this.src='/imgs/cnf404.png'" />
+                    <img id="modalPlateEn" class="w3-image" onerror="this.src='/imgs/pnf404.png'" />
+                </div>
+                <div class="w3-half w3-center">
+                    <h3><b>تصویر خروج</b></h3>
+                    <img id="modalImageEx" class="w3-image w3-padding-small" onerror="this.src='/imgs/cnf404.png'" />
+                    <img id="modalPlateEx" class="w3-image" onerror="this.src='/imgs/pnf404.png'" />
+                </div>
+            </div>
+            <div class="w3-container w3-padding">
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>زمان ورود: </lable></span>
+                    <label id="xEntryDateTime"></label>
+                </div>
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>زمان خروج: </lable></span>
+                    <label id="xDepartureDateTime"></label>
+                </div>
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>پلاک ورود: </lable></span>
+                    <label id="xLicencePlateEn"></label>
+                </div>
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>پلاک خروج: </lable></span>
+                    <label id="xLicencePlateEx"></label>
+                </div>
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>مبلغ: </lable></span>
+                    <label id="xPaid"></label>
+                </div>
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>تعرفه: </lable></span>
+                    <label id="xTariff"></label>
+                </div>
+                <div class="w3-col s6 m4 l3 w3-right">
+                    <span class="w3-right"><lable>شماره کارت: </lable></span>
+                    <label id="xTagId"></label>
+                </div>
+            </div>
+            <footer class="w3-container w3-padding-large w3-light-gray w3-center">
+                <h3><b>تغییر وضعیت به</b></h3>
+                <div class="w3-third w3-padding-large">
+                    <h3>
+                        <button id="modalDelete" class="w3-container w3-red w3-button w3-round w3-hover-lime" style="width:100%;height:70px;display:grid"><b>حذف شده</b></button>
+                    </h3>
+                </div>
+                <div class="w3-third w3-padding-large">
+                    <h3>
+                        <button id="modalDeparture" class="w3-container w3-orange w3-button w3-round w3-hover-lime" style="width: 100%; height: 70px; display: grid"><b>خارج شده</b></button>
+                    </h3>
+                </div>
+                <div class="w3-third w3-padding-large">
+                    <h3>
+                        <button id="modalEnter" class="w3-container w3-green w3-button w3-round w3-hover-lime" style="width: 100%; height: 70px; display: grid"><b>وارد شده</b></button>
+                    </h3>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!--END MODAL DETAIL-->
+</div>
+@section Scripts
+{
+    <script src="~/js/Report.js"></script>
+}
